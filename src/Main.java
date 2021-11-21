@@ -16,8 +16,6 @@ public class Main {
 		float far = 10f;
 		Projector projector = new Projector("Projector Frame", near, far, fovDeg, height, width);
 		
-		
-		
 		// Define a prism and all its triangles
 		Model prism = new Model(MeshFactory.readFile(new File("Icosphere.obj")));
 		prism.setColor(new Color(255, 55, 2));
@@ -28,8 +26,6 @@ public class Main {
 		
 		// Register the prism with the projector
 		projector.register(prism);
-		
-		
 		
 		// Make Some Walls!
 		Model rec = new Model(MeshFactory.getCube());
@@ -43,11 +39,8 @@ public class Main {
 			recT.rot().add(.10f, 0f, .01f);   
 		}
 		
-		
-		
 		// Paint it once
 		projector.render();
-		
 		
 		// Try to rotate the prism
 		new Thread(()->{
@@ -74,7 +67,7 @@ public class Main {
 			}
 		}).start();
 		
-		
+		// Input Thread
 		new Thread(()->{
 			while (true) {
 				try {Thread.sleep(10);} catch (Exception e) {}
@@ -120,37 +113,7 @@ public class Main {
 			}
 		}).start();
 		
-
-		// Start watching for user input
-//		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-//			.addKeyEventDispatcher((KeyEvent e) -> {
-//
-//				// Translate the prism based on the key pressed
-//				char key = e.getKeyChar();
-//				
-//				if (key == 'w') {
-//					projector.getCamera().move(.1f, 0, 0);
-//				} else if (key == 's') {
-//					projector.getCamera().move(-.1f, 0, 0);
-//				} else if (key == 'a') {
-//					projector.getCamera().move(0, -.1f, 0);
-//				} else if (key == 'd') {
-//					projector.getCamera().move(0, .1f, 0);
-//				} else if (key == 'q') {
-//					projector.getCamera().rot().add(0, .1f, 0);
-//				} else if (key == 'e') {
-//					projector.getCamera().rot().add(0, -.1f, 0);
-//				}
-//				
-//				projector.render();
-//				return false;
-//				
-//		});
-		
 	}
-	
-	
-	
 	
 	
 //	public static double count = 0;

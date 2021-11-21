@@ -10,6 +10,7 @@ public class Vector3 implements Cloneable {
 		this.z = z;
 	}
 	
+	
 	public Vector3 () {
 		this.x = 0;
 		this.y = 0;
@@ -28,6 +29,7 @@ public class Vector3 implements Cloneable {
 		setZ(z);
 	}
 	
+	
 	public void addX (float x)   {this.x+=x;}
 	public void addY (float y)   {this.y+=y;}
 	public void addZ (float z)   {this.z+=z;}
@@ -38,6 +40,7 @@ public class Vector3 implements Cloneable {
 		addY(y);
 		addZ(z);
 	}
+	
 	
 	public void mpyX (float x)   {this.x*=x;}
 	public void mpyY (float y)   {this.y*=y;}
@@ -50,6 +53,7 @@ public class Vector3 implements Cloneable {
 		mpyZ(z);
 	}
 	
+	
 	public void modX (float x)   {this.x%=x;}
 	public void modY (float y)   {this.y%=y;}
 	public void modZ (float z)   {this.z%=z;}
@@ -61,9 +65,11 @@ public class Vector3 implements Cloneable {
 		modZ(z);
 	}
 
+	
 	public float getX() {return x;}
 	public float getY() {return y;}
 	public float getZ() {return z;}
+	
 	
 	public Vector3 getNegative() {
 		Vector3 cln = this.clone();
@@ -82,6 +88,11 @@ public class Vector3 implements Cloneable {
 	public Vector3 clone() {
 		return new Vector3(x, y, z);
 	}
+	
+	
+	public float magnitude() {
+		return (float) Math.sqrt(getX()*getX() + getY()*getY() + getZ()*getZ());
+	}
 
 	
 	public static float dotProduct(Vector3 line1, Vector3 line2) {
@@ -90,12 +101,37 @@ public class Vector3 implements Cloneable {
 			   line1.getZ() * line2.getZ();
 	}
 	
+	
 	public static Vector3 crossProduct(Vector3 line1, Vector3 line2) {
 		Vector3 out = new Vector3();
 		out.x = line1.getY()*line2.getZ() - line1.getZ()*line2.getY();
 		out.y = line1.getZ()*line2.getX() - line1.getX()*line2.getZ();
 		out.z = line1.getX()*line2.getY() - line1.getY()*line2.getX();
 		return out;
+	}
+	
+	
+	// Expects line to actually intersect the line segment, otherwise it returns a point along the line
+	public static Vector3 planarIntersect (Vector3 planeP, Vector3 planeN, Vector3 pA, Vector3 pB) {
+		float planeD = -Vector3.dotProduct(pA, pB);
+		float dotA = Vector3.dotProduct(pA, planeN);
+		float dotB = Vector3.dotProduct(pB, planeN);
+		float t = (-planeD - dotA) / (dotB - dotA);
+		
+		// Find Line from point a to point b (pA - pB)
+		Vector3 pApB = pB.getNegative(); pApB.add(pA);
+		
+		// find line from point a to point of intersection
+		pApB.mpy(t); pApB.add(pA);
+		
+		// Return intersection point
+		return pApB;
+	}
+	
+	public static float planarDist (Vector3 planeP, Vector3 planeN, Vector3 point) {
+		return (planeN.getX() * point.getX() + planeN.getY() * point.getY()
+				+ planeN.getZ() * point.getZ() - Vector3.dotProduct(planeN, planeP)
+				) / planeN.magnitude();
 	}
 	
 	public String toString() {
