@@ -26,6 +26,7 @@ public class Projector {
 	private Transform camera;
 	private Vector3 lightDirection;
 	
+	
 	public Projector (String name, float near, float far, float fovDegrees, int height, int width) {
 		
 		this.near = near;
@@ -53,6 +54,7 @@ public class Projector {
 		lightDirection.normalize();
 	}
 	
+	
 	private void buildMatrix() {
 		matrix[0][0] = aspectRatio * fovRad;
 		matrix[1][1] = fovRad;
@@ -61,12 +63,14 @@ public class Projector {
 		matrix[2][3] = 1f;
 	}
 	
+	
 	public void register (Model mesh) {
 		list.add(mesh);
 	}
 	
+	public static Vector3 temp = new Vector3(1,0,1);
 	public void render() {
-		
+		temp.normalize();
 		Graphics2D g2D = (Graphics2D)image.createGraphics();
 		g2D.clearRect(0, 0, width, height);
 		
@@ -74,22 +78,25 @@ public class Projector {
 		
 		for (Model model : list) {
 			Mesh mesh = model.toWorldspace();
-			for (Triangle in : mesh.getTris()) {
-				// The line drawn towards the camera
-				Vector3 p = camera.pos().getNegative();
-				p.add(in.p1);
-				// If it can be seen, draw
-				if (Vector3.dotProduct(in.normal,p) < 0f) {
-					in.applyInverseTransform(camera);
-					Matrix4x4.transformTriangle(in, in, matrix);
-					in.translate(1f,1f,0f);
-					in.scale(width/2, height/2, 1);
-					
-					in.color = model.getColor();
-					trisToRender.add(in);
+			for (Triangle listedTri : mesh.getTris()) {
+				for (Triangle in : listedTri.getClippedAgainstPlane(new Vector3(), temp)) {
+					// The line drawn towards the camera
+					Vector3 p = camera.pos().getNegative();
+					p.add(in.p1);
+					// If it can be seen, draw
+					if (Vector3.dotProduct(in.normal,p) < 0f) {
+						in.applyInverseTransform(camera); // Reciprocate scale?
+						Matrix4x4.transformTriangle(in, in, matrix);
+						in.translate(1f,1f,0f);
+						in.scale(width/2, height/2, 1);
+						
+						in.color = model.getColor();
+						trisToRender.add(in);
+					}
 				}
 			}
 		}
+		
 		
 		Collections.sort(trisToRender);
 		for (int i = 0; i < trisToRender.size(); i++) {
@@ -113,8 +120,8 @@ public class Projector {
 			
 			g2D.setColor(new Color((int)(dp*perRed),(int)(dp*perGrn),(int)(dp*perBlu)));
 			g2D.fillPolygon(tri.toPolygon());
-//			g2D.setColor(Color.ORANGE);
-//			g2D.draw(tri.toPolygon());
+			g2D.setColor(Color.ORANGE);
+			g2D.draw(tri.toPolygon());
 		}
 		
 		frame.repaint();
@@ -125,7 +132,6 @@ public class Projector {
 	public Transform getCamera() {
 		return camera;
 	}
-	
 	
 	
 	private class MeshFrame extends JFrame {
