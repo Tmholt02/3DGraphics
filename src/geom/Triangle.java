@@ -13,6 +13,7 @@ public class Triangle implements Cloneable, Comparable<Object> {
 		this.p1 = p1;
 		this.p2 = p2;
 		this.p3 = p3;
+		this.calcNormal();
 	}
 	
 	public Triangle (
@@ -23,12 +24,14 @@ public class Triangle implements Cloneable, Comparable<Object> {
 		this.p1 = new Vector3(x1, y1, z1);
 		this.p2 = new Vector3(x2, y2, z2);
 		this.p3 = new Vector3(x3, y3, z3);
+		this.calcNormal();
 	}
 	
 	public Triangle () {
 		this.p1 = new Vector3();
 		this.p2 = new Vector3();
 		this.p3 = new Vector3();
+		this.calcNormal();
 	}
 	
 	public Vector3 getCenter() {
@@ -119,6 +122,68 @@ public class Triangle implements Cloneable, Comparable<Object> {
 				3
 		);
 	}
+	
+	
+	public Triangle[] getClippedAgainstPlane (Vector3 planeP, Vector3 planeN) {
+		
+		boolean p1Within = p1.planarDist(planeP, planeN) >= 0; System.out.println(p1Within);
+		boolean p2Within = p2.planarDist(planeP, planeN) >= 0; System.out.println(p2Within);
+		boolean p3Within = p3.planarDist(planeP, planeN) >= 0; System.out.println(p3Within);
+		
+		if (p1Within && p2Within && p3Within) {
+			return new Triangle[] {this};
+		}
+		else if (p1Within && p2Within) {
+			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
+			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
+			return new Triangle[] {
+					new Triangle(p1, p2, split23),
+					new Triangle(p1, split23, split31)
+			};
+		}
+		else if (p2Within && p3Within) {
+			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
+			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
+			return new Triangle[] {
+					new Triangle(split12, p2, p3),
+					new Triangle(split12, p3, split31)
+			};
+		}
+		else if (p1Within && p3Within) {
+			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
+			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
+			return new Triangle[] {
+					new Triangle(p1, split12, p3),
+					new Triangle(split12, split23, p3)
+			};
+		}
+		else if (p1Within) {
+			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
+			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
+			return new Triangle[] {
+					new Triangle(p1, split12, split31)
+			};
+		}
+		else if (p2Within) {
+			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
+			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
+			return new Triangle[] {
+					new Triangle(split12, p2, split23)
+			};
+		}
+		else if (p3Within) {
+			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
+			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
+			return new Triangle[] {
+					new Triangle(split31, split23, p3)
+			};
+		}
+		else {
+			return new Triangle[0];
+		}
+		
+	}
+	
 	
 	@Override
 	public Triangle clone() {
