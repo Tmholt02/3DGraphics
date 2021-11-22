@@ -17,7 +17,7 @@ public class Main {
 		Projector projector = new Projector("Projector Frame", near, far, fovDeg, height, width);
 		
 		// Define a prism and all its triangles
-		Model prism = new Model(MeshFactory.readFile(new File("Icosphere.obj")));
+		Model prism = new Model(MeshFactory.readFile(new File("Torus.obj")));
 		prism.setColor(new Color(255, 55, 2));
 		Transform t = prism.getTransform();
 		
