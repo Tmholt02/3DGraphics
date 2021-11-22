@@ -111,7 +111,7 @@ public class Vector3 implements Cloneable {
 	}
 	
 	
-	// Expects line to actually intersect the line segment, otherwise it returns a point along the line
+	// Expects plane to actually intersect the line segment, otherwise it returns a point along the line
 	public static Vector3 planarIntersect (Vector3 planeP, Vector3 planeN, Vector3 pA, Vector3 pB) {
 		float planeD = -Vector3.dotProduct(pA, pB);
 		float dotA = Vector3.dotProduct(pA, planeN);
@@ -119,7 +119,7 @@ public class Vector3 implements Cloneable {
 		float t = (-planeD - dotA) / (dotB - dotA);
 		
 		// Find Line from point a to point b (pA - pB)
-		Vector3 pApB = pB.getNegative(); pApB.add(pA);
+		Vector3 pApB = pA.getNegative(); pApB.add(pB);
 		
 		// find line from point a to point of intersection
 		pApB.mpy(t); pApB.add(pA);
@@ -128,11 +128,13 @@ public class Vector3 implements Cloneable {
 		return pApB;
 	}
 	
-	public static float planarDist (Vector3 planeP, Vector3 planeN, Vector3 point) {
-		return (planeN.getX() * point.getX() + planeN.getY() * point.getY()
-				+ planeN.getZ() * point.getZ() - Vector3.dotProduct(planeN, planeP)
+	
+	public float planarDist (Vector3 planeP, Vector3 planeN) {
+		return (planeN.getX() * this.getX() + planeN.getY() * this.getY()
+				+ planeN.getZ() * this.getZ() - Vector3.dotProduct(planeN, planeP)
 				) / planeN.magnitude();
 	}
+	
 	
 	public String toString() {
 		return "[x: " + x +",  y: " + y + ",  z: " + z + "]";
