@@ -113,7 +113,7 @@ public class Vector3 implements Cloneable {
 	
 	// Expects plane to actually intersect the line segment, otherwise it returns a point along the line
 	public static Vector3 planarIntersect (Vector3 planeP, Vector3 planeN, Vector3 pA, Vector3 pB) {
-		float planeD = -Vector3.dotProduct(pA, pB);
+		float planeD = -Vector3.dotProduct(planeN, planeP);
 		float dotA = Vector3.dotProduct(pA, planeN);
 		float dotB = Vector3.dotProduct(pB, planeN);
 		float t = (-planeD - dotA) / (dotB - dotA);
@@ -132,7 +132,7 @@ public class Vector3 implements Cloneable {
 	public float planarDist (Vector3 planeP, Vector3 planeN) {
 		return (planeN.getX() * this.getX() + planeN.getY() * this.getY()
 				+ planeN.getZ() * this.getZ() - Vector3.dotProduct(planeN, planeP)
-				) / planeN.magnitude();
+				);
 	}
 	
 	

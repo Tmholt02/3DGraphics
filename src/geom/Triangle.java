@@ -16,6 +16,14 @@ public class Triangle implements Cloneable, Comparable<Object> {
 		this.calcNormal();
 	}
 	
+	public Triangle (Vector3 p1, Vector3 p2, Vector3 p3, Color color) {
+		this.p1 = p1;
+		this.p2 = p2;
+		this.p3 = p3;
+		this.color = color;
+		this.calcNormal();
+	}
+	
 	public Triangle (
 		float x1, float y1, float z1,
 		float x2, float y2, float z2,
@@ -126,9 +134,9 @@ public class Triangle implements Cloneable, Comparable<Object> {
 	
 	public Triangle[] getClippedAgainstPlane (Vector3 planeP, Vector3 planeN) {
 		
-		boolean p1Within = p1.planarDist(planeP, planeN) >= 0; System.out.println(p1Within);
-		boolean p2Within = p2.planarDist(planeP, planeN) >= 0; System.out.println(p2Within);
-		boolean p3Within = p3.planarDist(planeP, planeN) >= 0; System.out.println(p3Within);
+		boolean p1Within = p1.planarDist(planeP, planeN) >= 0;
+		boolean p2Within = p2.planarDist(planeP, planeN) >= 0;
+		boolean p3Within = p3.planarDist(planeP, planeN) >= 0;
 		
 		if (p1Within && p2Within && p3Within) {
 			return new Triangle[] {this};
@@ -137,45 +145,45 @@ public class Triangle implements Cloneable, Comparable<Object> {
 			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
 			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
 			return new Triangle[] {
-					new Triangle(p1, p2, split23),
-					new Triangle(p1, split23, split31)
+					new Triangle(p1.clone(), p2.clone(), split23, color),
+					new Triangle(p1.clone(), split23.clone(), split31, color)
 			};
 		}
 		else if (p2Within && p3Within) {
 			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
 			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
 			return new Triangle[] {
-					new Triangle(split12, p2, p3),
-					new Triangle(split12, p3, split31)
+					new Triangle(split12, p2.clone(), p3.clone(), color),
+					new Triangle(split12.clone(), p3.clone(), split31, color)
 			};
 		}
 		else if (p1Within && p3Within) {
 			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
 			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
 			return new Triangle[] {
-					new Triangle(p1, split12, p3),
-					new Triangle(split12, split23, p3)
+					new Triangle(p1.clone(), split12, p3.clone(), color),
+					new Triangle(split12.clone(), split23, p3.clone(), color)
 			};
 		}
 		else if (p1Within) {
 			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
 			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
 			return new Triangle[] {
-					new Triangle(p1, split12, split31)
+					new Triangle(p1, split12, split31, color)
 			};
 		}
 		else if (p2Within) {
 			Vector3 split12 = Vector3.planarIntersect(planeP, planeN, p1, p2);
 			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
 			return new Triangle[] {
-					new Triangle(split12, p2, split23)
+					new Triangle(split12, p2, split23, color)
 			};
 		}
 		else if (p3Within) {
 			Vector3 split23 = Vector3.planarIntersect(planeP, planeN, p2, p3);
 			Vector3 split31 = Vector3.planarIntersect(planeP, planeN, p3, p1);
 			return new Triangle[] {
-					new Triangle(split31, split23, p3)
+					new Triangle(split31, split23, p3, color)
 			};
 		}
 		else {
@@ -187,7 +195,7 @@ public class Triangle implements Cloneable, Comparable<Object> {
 	
 	@Override
 	public Triangle clone() {
-		return new Triangle( p1.clone(),  p2.clone(), p3.clone());
+		return new Triangle( p1.clone(),  p2.clone(), p3.clone(), color);
 	}
 
 	@Override
