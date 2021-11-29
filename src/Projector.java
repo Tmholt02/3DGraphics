@@ -68,7 +68,7 @@ public class Projector {
 		list.add(mesh);
 	}
 	
-	public static Vector3 temp = new Vector3(1,0,1);
+	public static Vector3 temp = new Vector3(0,0,1);
 	public void render() {
 		temp.normalize();
 		Graphics2D g2D = (Graphics2D)image.createGraphics();
@@ -77,21 +77,19 @@ public class Projector {
 		List<Triangle> trisToRender = new ArrayList<>();
 		
 		for (Model model : list) {
-			Mesh mesh = model.toWorldspace();
-			for (Triangle listedTri : mesh.getTris()) {
-				for (Triangle in : listedTri.getClippedAgainstPlane(new Vector3(), temp)) {
-					// The line drawn towards the camera
-					Vector3 p = camera.pos().getNegative();
-					p.add(in.p1);
-					// If it can be seen, draw
-					if (Vector3.dotProduct(in.normal,p) < 0f) {
-						in.applyInverseTransform(camera); // Reciprocate scale?
-						Matrix4x4.transformTriangle(in, in, matrix);
-						in.translate(1f,1f,0f);
-						in.scale(width/2, height/2, 1);
-						
-						in.color = model.getColor();
-						trisToRender.add(in);
+			for (Triangle in : model.toWorldspace().getTris()) {
+				
+				// The line drawn towards the camera
+				Vector3 p = camera.pos().getNegative();
+				p.add(in.p1);
+				// If it can be seen, draw
+				if (Vector3.dotProduct(in.normal, p) < 0f) {
+					in.applyInverseTransform(camera); // Reciprocate scale?
+					for (Triangle clipped: in.getClippedAgainstPlane(new Vector3(0f, 0f, .001f), temp)) {
+						Matrix4x4.transformTriangle(clipped, clipped, matrix);
+						clipped.translate(1f, 1f, 0f);
+						clipped.scale(width/2, height/2, 1);
+						trisToRender.add(clipped);
 					}
 				}
 			}

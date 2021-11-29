@@ -5,11 +5,12 @@ import java.awt.Color;
 public class Mesh implements Cloneable {
 	
 	private Triangle[] tris;
-	public Color color;
+	
 	
 	public Mesh (Triangle[] tris) {
 		this.tris = tris;
 	}
+	
 	
 	public Mesh (Float[] pts) {
 		tris = new Triangle[pts.length / 9];
@@ -63,12 +64,17 @@ public class Mesh implements Cloneable {
 		float[][] matrixX = p.getMatrixX();
 		float[][] matrixY = p.getMatrixY();
 		float[][] matrixZ = p.getMatrixZ();
-		Matrix4x4.transformMesh(this,this,matrixX);
-		Matrix4x4.transformMesh(this,this,matrixY);
-		Matrix4x4.transformMesh(this,this,matrixZ);
+		Matrix4x4.transformMesh(this, this, matrixX);
+		Matrix4x4.transformMesh(this, this, matrixY);
+		Matrix4x4.transformMesh(this, this, matrixZ);
 	}
 	
 	
+	public void setColor (Color color) {
+		for (Triangle tri : getTris()) {
+			tri.color = color;
+		}
+	}
 	
 	
 	@Override

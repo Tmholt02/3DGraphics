@@ -33,11 +33,8 @@ public class Model implements Cloneable {
 	}
 	
 	public void setColor (Color color) {
-		mesh.color = color;
+		mesh.setColor(color);
 	}
 	
-	public Color getColor() {
-		return mesh.color;
-	}
 	
 }
