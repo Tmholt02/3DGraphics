@@ -21,13 +21,12 @@ public class Projector {
 	private float near, far, fovRad, aspectRatio;
 	private float[][] matrix;
 	private List<Model> list;
-	private MeshFrame frame;
-	private BufferedImage image;
+	private Graphics2D outG;
 	private Transform camera;
 	private Vector3 lightDirection;
 	
 	
-	public Projector (String name, float near, float far, float fovDegrees, int height, int width) {
+	public Projector (float near, float far, float fovDegrees, int height, int width, Graphics2D outG) {
 		
 		this.near = near;
 		this.far = far;
@@ -41,13 +40,7 @@ public class Projector {
 		
 		list = new LinkedList<>();
 		
-		frame = new MeshFrame(name);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(width, height);
-		frame.setResizable(false);
-		frame.setVisible(true);
-		
-		image = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+		this.outG = outG;
 		
 		camera = new Transform();
 		lightDirection = new Vector3(8f, -7f,-10f);
@@ -68,11 +61,9 @@ public class Projector {
 		list.add(mesh);
 	}
 	
+	
 	public static Vector3 temp = new Vector3(0,0,1);
 	public void render() {
-		temp.normalize();
-		Graphics2D g2D = (Graphics2D)image.createGraphics();
-		g2D.clearRect(0, 0, width, height);
 		
 		List<Triangle> trisToRender = new ArrayList<>();
 		
@@ -89,12 +80,15 @@ public class Projector {
 						Matrix4x4.transformTriangle(clipped, clipped, matrix);
 						clipped.translate(1f, 1f, 0f);
 						clipped.scale(width/2, height/2, 1);
+						clipped.normal = in.normal;
 						trisToRender.add(clipped);
 					}
 				}
 			}
 		}
 		
+		temp.normalize();
+		outG.clearRect(0, 0, width, height);
 		
 		Collections.sort(trisToRender);
 		for (int i = 0; i < trisToRender.size(); i++) {
@@ -116,28 +110,16 @@ public class Projector {
 				perBlu = tri.color.getBlue()  /255f;
 			}
 			
-			g2D.setColor(new Color((int)(dp*perRed),(int)(dp*perGrn),(int)(dp*perBlu)));
-			g2D.fillPolygon(tri.toPolygon());
-			g2D.setColor(Color.ORANGE);
-			g2D.draw(tri.toPolygon());
+			outG.setColor(new Color((int)(dp*perRed), (int)(dp*perGrn), (int)(dp*perBlu)));
+			outG.fillPolygon(tri.toPolygon());
+//			outG.setColor(Color.ORANGE);
+//			outG.draw(tri.toPolygon());
 		}
-		
-		frame.repaint();
 		
 	}
 	
 	
 	public Transform getCamera() {
 		return camera;
-	}
-	
-	
-	private class MeshFrame extends JFrame {
-		private static final long serialVersionUID = 1L;
-		public MeshFrame (String name) { super(name); }
-		@Override
-		public void paint(Graphics g) {
-			g.drawImage(image, 0, 0, width, height, Color.GRAY, null);
-		}
 	}
 }
