@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.io.File;
 
+import javax.swing.JFrame;
+
+import geom.BufferedComponent;
 import geom.MeshFactory;
 import geom.Transform;
 
@@ -8,13 +11,26 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		
+		
+		
+		
 		// Start our system!
 		int width  = 1800;
 		int height = 1000;
 		float fovDeg = 50f;
 		float near = .1f;
 		float far = 10f;
-		Projector projector = new Projector("Projector Frame", near, far, fovDeg, height, width);
+		BufferedComponent comp = new BufferedComponent(width, height);
+		Projector projector = new Projector(near, far, fovDeg, height, width, comp.getBufferdGraphics());
+		JFrame frame = new JFrame("Art?");
+		
+		// Set up JFrame
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(width, height);
+		frame.setResizable(false);
+		frame.add(comp);
+		frame.setVisible(true);
 		
 		// Define a prism and all its triangles
 		Model prism = new Model(MeshFactory.readFile(new File("Torus.obj")));
@@ -63,6 +79,7 @@ public class Main {
 				}
 				t.rot().add(.043f,.0f,.053f);
 				projector.render();
+				frame.repaint();
 				try {Thread.sleep(60);} catch (Exception e) {}
 			}
 		}).start();
