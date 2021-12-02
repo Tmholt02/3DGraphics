@@ -1,3 +1,4 @@
+package tmholt.dimthree;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -5,10 +6,11 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import geom.Matrix4x4;
-import geom.Transform;
-import geom.Vector3;
-import geom.Triangle;
+import tmholt.dimthree.geom.Matrix4x4;
+import tmholt.dimthree.geom.Triangle;
+import tmholt.dimthree.geom.Vector3;
+import tmholt.dimthree.modelmesh.Model;
+import tmholt.dimthree.modelmesh.Transform;
 
 public class Projector {
 	

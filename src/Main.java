@@ -3,10 +3,13 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
-import geom.BufferedComponent;
-import geom.MeshFactory;
-import geom.Transform;
-import geom.Vector3;
+import tmholt.dimthree.BufferedComponent;
+import tmholt.dimthree.Input;
+import tmholt.dimthree.Projector;
+import tmholt.dimthree.geom.Vector3;
+import tmholt.dimthree.modelmesh.MeshFactory;
+import tmholt.dimthree.modelmesh.Model;
+import tmholt.dimthree.modelmesh.Transform;
 
 public class Main {
 

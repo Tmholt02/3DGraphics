@@ -1,4 +1,4 @@
-package geom;
+package tmholt.dimthree.geom;
 
 public class Vector3 implements Cloneable {
 	

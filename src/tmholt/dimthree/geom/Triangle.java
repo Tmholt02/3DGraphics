@@ -1,7 +1,9 @@
-package geom;
+package tmholt.dimthree.geom;
 
 import java.awt.Color;
 import java.awt.Polygon;
+
+import tmholt.dimthree.modelmesh.Transform;
 
 public class Triangle implements Cloneable, Comparable<Object> {
 	

@@ -1,4 +1,4 @@
-package geom;
+package tmholt.dimthree;
 
 import java.awt.Dimension;
 import java.awt.Graphics;

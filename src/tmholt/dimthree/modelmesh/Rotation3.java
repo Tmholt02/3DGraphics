@@ -1,4 +1,7 @@
-package geom;
+package tmholt.dimthree.modelmesh;
+
+import tmholt.dimthree.geom.Matrix4x4;
+import tmholt.dimthree.geom.Vector3;
 
 public class Rotation3 extends Vector3 {
 	

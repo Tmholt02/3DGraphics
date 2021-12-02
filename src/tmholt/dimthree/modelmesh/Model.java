@@ -1,7 +1,5 @@
+package tmholt.dimthree.modelmesh;
 import java.awt.Color;
-
-import geom.Mesh;
-import geom.Transform;
 
 public class Model implements Cloneable {
 	

@@ -1,9 +1,12 @@
 
-package geom;
+package tmholt.dimthree.modelmesh;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+
+import tmholt.dimthree.geom.Triangle;
+import tmholt.dimthree.geom.Vector3;
 
 //import java.io.File;
 //import java.io.FileNotFoundException;

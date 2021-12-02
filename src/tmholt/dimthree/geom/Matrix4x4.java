@@ -1,4 +1,6 @@
-package geom;
+package tmholt.dimthree.geom;
+
+import tmholt.dimthree.modelmesh.Mesh;
 
 public class Matrix4x4 {
 	

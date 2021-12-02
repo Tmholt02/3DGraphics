@@ -1,6 +1,10 @@
-package geom;
+package tmholt.dimthree.modelmesh;
 
 import java.awt.Color;
+
+import tmholt.dimthree.geom.Matrix4x4;
+import tmholt.dimthree.geom.Triangle;
+import tmholt.dimthree.geom.Vector3;
 
 public class Mesh implements Cloneable {
 	
