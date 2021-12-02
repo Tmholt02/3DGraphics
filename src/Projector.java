@@ -1,21 +1,19 @@
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JFrame;
-
 import geom.Matrix4x4;
-import geom.Mesh;
 import geom.Transform;
 import geom.Vector3;
 import geom.Triangle;
 
 public class Projector {
+	
+	private static Vector3 forward = new Vector3(0, 0, 1);
+	private Vector3 clipPos;
 	
 	private int height, width;
 	private float near, far, fovRad, aspectRatio;
@@ -25,8 +23,10 @@ public class Projector {
 	private Transform camera;
 	private Vector3 lightDirection;
 	
+	private boolean debug;
 	
-	public Projector (float near, float far, float fovDegrees, int height, int width, Graphics2D outG) {
+	
+	public Projector (float near, float far, float fovDegrees, int height, int width, Vector3 lightDirection, Graphics2D outG) {
 		
 		this.near = near;
 		this.far = far;
@@ -43,8 +43,13 @@ public class Projector {
 		this.outG = outG;
 		
 		camera = new Transform();
-		lightDirection = new Vector3(8f, -7f,-10f);
+		
+		this.lightDirection = lightDirection;
 		lightDirection.normalize();
+		
+		clipPos = new Vector3(0f, 0f, near);
+		
+		debug = false;
 	}
 	
 	
@@ -62,7 +67,7 @@ public class Projector {
 	}
 	
 	
-	public static Vector3 temp = new Vector3(0,0,1);
+	
 	public void render() {
 		
 		List<Triangle> trisToRender = new ArrayList<>();
@@ -76,7 +81,7 @@ public class Projector {
 				// If it can be seen, draw
 				if (Vector3.dotProduct(in.normal, p) < 0f) {
 					in.applyInverseTransform(camera); // Reciprocate scale?
-					for (Triangle clipped: in.getClippedAgainstPlane(new Vector3(0f, 0f, .001f), temp)) {
+					for (Triangle clipped: in.getClippedAgainstPlane(clipPos, forward)) {
 						Matrix4x4.transformTriangle(clipped, clipped, matrix);
 						clipped.translate(1f, 1f, 0f);
 						clipped.scale(width/2, height/2, 1);
@@ -87,7 +92,6 @@ public class Projector {
 			}
 		}
 		
-		temp.normalize();
 		outG.clearRect(0, 0, width, height);
 		
 		Collections.sort(trisToRender);
@@ -112,8 +116,10 @@ public class Projector {
 			
 			outG.setColor(new Color((int)(dp*perRed), (int)(dp*perGrn), (int)(dp*perBlu)));
 			outG.fillPolygon(tri.toPolygon());
-//			outG.setColor(Color.ORANGE);
-//			outG.draw(tri.toPolygon());
+			if (debug) {
+				outG.setColor(Color.ORANGE);
+				outG.draw(tri.toPolygon());
+			}
 		}
 		
 	}
@@ -121,5 +127,13 @@ public class Projector {
 	
 	public Transform getCamera() {
 		return camera;
+	}
+	
+	public void setDebug (boolean debug) {
+		this.debug = debug;
+	}
+	
+	public boolean getDebug() {
+		return debug;
 	}
 }

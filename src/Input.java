@@ -57,7 +57,6 @@ public enum Input {
             @Override
             public boolean dispatchKeyEvent(KeyEvent ke) {
                 synchronized (Input.class) {
-                    //switch (ke.getID()) {
                         if (map.containsKey(ke.getKeyCode())) {
                         	Input value = map.get(ke.getKeyCode());
                             if      (ke.getID() == KeyEvent.KEY_PRESSED) value.pressed = true;

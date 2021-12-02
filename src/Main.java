@@ -6,23 +6,23 @@ import javax.swing.JFrame;
 import geom.BufferedComponent;
 import geom.MeshFactory;
 import geom.Transform;
+import geom.Vector3;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		
-		
-		
-		
-		// Start our system!
+		// Parameter values
 		int width  = 1800;
 		int height = 1000;
 		float fovDeg = 50f;
 		float near = .1f;
 		float far = 10f;
+		Vector3 lightDirection = new Vector3(8f, -7f,-10f);
+		
+		// Start our system!
 		BufferedComponent comp = new BufferedComponent(width, height);
-		Projector projector = new Projector(near, far, fovDeg, height, width, comp.getBufferdGraphics());
+		Projector projector = new Projector(near, far, fovDeg, height, width, lightDirection, comp.getBufferdGraphics());
 		JFrame frame = new JFrame("Art?");
 		
 		// Set up JFrame
@@ -58,7 +58,8 @@ public class Main {
 		// Paint it once
 		projector.render();
 		
-		// Try to rotate the prism
+		
+		// Try to rotate the prism and update the colors constantly
 		new Thread(()->{
 			int r = 255;
 			int g = 0;
@@ -67,7 +68,7 @@ public class Main {
 				prism.setColor(new Color(r, g, b));
 				if (b == 0 && r != 0) {
 					r--;
-					g+=1;    
+					g+=1;
 				}
 				else if (r == 0 && g != 0) {
 					g--;
@@ -84,10 +85,10 @@ public class Main {
 			}
 		}).start();
 		
-		// Input Thread
+		
+		// Input Thread that reads and updates Input
 		new Thread(()->{
 			while (true) {
-				try {Thread.sleep(10);} catch (Exception e) {}
 				
 				if (Input.W.isPressed()) {
 					projector.getCamera().move(.1f, 0, 0);
@@ -127,6 +128,12 @@ public class Main {
 					projector.getCamera().rot().add(0, 0, -.1f);
 				}
 				
+				if (Input.X.isPressed()) {
+					projector.setDebug(!projector.getDebug());
+				}
+				
+				try {Thread.sleep(10);} catch (Exception e) {}
+				
 			}
 		}).start();
 		
@@ -136,18 +143,30 @@ public class Main {
 //	public static double count = 0;
 //	public static void main(String[] args) {
 //		
+//		// Start our system!
 //		int width  = 1800;
 //		int height = 1000;
 //		float fovDeg = 50f;
 //		float near = .1f;
 //		float far = 10f;
-//		Projector projector = new Projector("Projector Frame", near, far, fovDeg, height, width);
+//		BufferedComponent comp = new BufferedComponent(width, height);
+//		Projector projector = new Projector(near, far, fovDeg, height, width, comp.getBufferdGraphics());
+//		JFrame frame = new JFrame("Art?");
+//		projector.setDebug(true);
+//		
+//		// Set up JFrame
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		frame.setSize(width, height);
+//		frame.setResizable(false);
+//		frame.add(comp);
+//		frame.setVisible(true);
 //		
 //		
 //		Model cube = new Model(MeshFactory.getCube());
 //		Transform cubeTransform = cube.getTransform();
 //
 //		cubeTransform.pos().set(.5f, 1f, 3f);
+//		cubeTransform.rot().set(.5f, 1f, 3f);
 //		
 //		projector.register(cube);
 //		projector.render();
@@ -156,7 +175,9 @@ public class Main {
 //			while (true) {
 //				count+=0.2;
 //				cubeTransform.scl().set((float)Math.sin(count)/2 + 1f,(float)Math.cos(count)/2 + 1f, 1f);
+//				cubeTransform.pos().set((float)Math.sin(count/6)/2,(float)Math.cos(count/6)/2, 4f);
 //				projector.render();
+//				frame.repaint();
 //				try {Thread.sleep(10);} catch (Exception e) {}
 //			}
 //		}).start();
